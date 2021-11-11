@@ -1,0 +1,24 @@
+
+def angle(dx, dy, teta):
+  ix = scipy.ndimage.convolve(im, dx)
+  iy = scipy.ndimage.convolve(im, dy)
+  grad = np.cos(teta)*ix + np.sin(teta)*iy    #major formula that can be leveraged.
+  return grad
+
+final1 = angle(dx, dy, np.pi/4)
+final2 = angle(dx, dy, np.pi/2)
+final3 = angle(dx, dy, (3*np.pi)/2)
+
+plt.figure()
+mpl.pyplot.title("ORIGINAL IMAGE")
+mpl.pyplot.imshow(im)
+plt.figure()
+plt.axis('off')
+plt.title('Angled gradient pi/4')
+mpl.pyplot.imshow(final1)
+plt.figure()
+plt.title('Angled gradient pi/2')
+mpl.pyplot.imshow(final2)
+plt.figure()
+plt.title('Angled gradient (3*pi)/4')
+mpl.pyplot.imshow(final3)
