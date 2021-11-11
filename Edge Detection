@@ -1,0 +1,80 @@
+dx = np.array([[1, -1]])
+dy = np.array([[1],[-1]])
+def convolve(im, flt):
+  flt = flt[::-1]
+  (ih, iw) = im.shape
+  (kh, kw) = flt.shape
+  conv_img = np.zeros([ih,iw])
+  temp_img = np.zeros([kh,kw])
+  #print(temp_img.shape)
+  img_pad = np.zeros((im.shape[0]+2, im.shape[1]+2))
+  img_pad[1:-1, 1:-1] = im
+  x = im.shape[0]
+  y = im.shape[1]
+  if kw == 1:
+    for i in range(x):
+      for j in range(y):
+        temp_img = img_pad[i,j:j+2]
+        conv_img[i,j]= np.multiply(flt, temp_img).sum()
+
+  if kw == 2:
+    temp_img = np.zeros([kh, kw])
+    # print(temp_img.shape)
+    # print(flt.shape)
+    for i in range(y):
+      for j in range(x):
+       temp_img = np.array([img_pad[j:j+2, i]])
+       conv_img[j,i]= np.multiply(temp_img, flt).sum()  
+  
+  return conv_img
+  
+  Ix = convolve(im, dx)
+Iy = convolve(im, dy)
+edges = Ix**2. + Iy**2.
+
+plt.figure()
+plt.title('Edges without blurring')
+plt.axis('off')
+# visualizing edge responses using this range of values.
+plt.imshow(edges, vmin = 0., vmax = np.percentile(edges, 99))
+
+def box_filter(img):
+ ker = np.ones([11,11])
+ ker = ker * 1/121
+ return scipy.ndimage.convolve(img, ker)
+ 
+
+def Gaussian_filter(img):
+  ker = np.zeros([11,11])//2
+  for i in range(11):
+    for j in range(11):
+      ker[i,j] = (1/2*np.pi*2*2)*(np.exp(-(((i-5)**2 +(j-5)**2)/(2*2*2))))   #we took i-5 and j-5 since the filter needs to be concentrated towards center
+  return scipy.ndimage.convolve(img, ker)
+  
+  gim = Gaussian_filter(im)
+plt.figure()
+plt.axis('off')
+plt.title('Gaussian filter')
+plt.imshow(gim)
+
+bim = box_filter(im)
+plt.figure()
+plt.title('Box Filter')
+plt.axis('off')
+plt.imshow(bim)
+
+gix = (scipy.ndimage.convolve(gim, dx))**2
+giy = (scipy.ndimage.convolve(gim, dx))**2
+g_edges = gix + giy
+plt.figure()
+plt.title('Edges after Gaussian')
+plt.axis('off')
+
+plt.imshow(g_edges)
+
+b_edges = ((scipy.ndimage.convolve(bim, dx))**2)+((scipy.ndimage.convolve(bim, dx))**2)
+plt.figure()
+plt.title('Edges after box filter')
+plt.axis('off')
+
+plt.imshow(b_edges)
