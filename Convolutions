@@ -1,0 +1,31 @@
+dx = np.array([[1, -1]])
+dy = np.array([[1],[-1]])
+def convolve(im, flt):
+  flt = flt[::-1]
+  (ih, iw) = im.shape
+  (kh, kw) = flt.shape
+  conv_img = np.zeros([ih,iw])
+  temp_img = np.zeros([kh,kw])
+  #print(temp_img.shape)
+  img_pad = np.zeros((im.shape[0]+2, im.shape[1]+2))
+  img_pad[1:-1, 1:-1] = im
+  x = im.shape[0]
+  y = im.shape[1]
+  if kw == 1:
+    for i in range(x):
+      for j in range(y):
+        temp_img = img_pad[i,j:j+2]
+        conv_img[i,j]= np.multiply(flt, temp_img).sum()
+
+  if kw == 2:
+    temp_img = np.zeros([kh, kw])
+    # print(temp_img.shape)
+    # print(flt.shape)
+    for i in range(y):
+      for j in range(x):
+       temp_img = np.array([img_pad[j:j+2, i]])
+       conv_img[j,i]= np.multiply(temp_img, flt).sum()
+        
+  
+  
+  return conv_img
